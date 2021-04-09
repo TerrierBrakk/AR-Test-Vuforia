@@ -11,18 +11,31 @@ public class JoyStick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointer
 
 
     public RectTransform pad;
+    bool walking;
+
     public void OnDrag(PointerEventData eventData)
     {
         transform.position = eventData.position;
         transform.localPosition = Vector2.ClampMagnitude(eventData.position - (Vector2)pad.position, pad.rect.width * 0.5f);
 
         move = new Vector3(transform.localPosition.x, 0, transform.localPosition.y).normalized;
+
+        if (!walking)
+        {
+            walking = true;
+            unityChan.GetComponent<Animator>().SetBool("Walk", true);
+        }
+
     }
     public void OnPointerUp(PointerEventData eventData)
     {
         transform.localPosition = Vector3.zero;
         move = Vector3.zero;
         StopCoroutine("PlayerMove");
+
+        walking = false;
+        unityChan.GetComponent<Animator>().SetBool("Walk", false);
+
     }
     public void OnPointerDown(PointerEventData eventData)
     {
